@@ -1,8 +1,13 @@
+FROM node:20-alpine AS dev
+WORKDIR /app
+COPY package.json ./
+RUN yarn install
+CMD [ "yarn", "start:dev" ]
+
 FROM node:20-alpine AS dev-deps
 WORKDIR /app
 COPY package.json package.json
 RUN yarn install --frozen-lockfile
-
 
 FROM node:20-alpine AS builder
 WORKDIR /app
@@ -15,7 +20,6 @@ FROM node:20-alpine AS prod-deps
 WORKDIR /app
 COPY package.json package.json
 RUN yarn install --prod --frozen-lockfile
-
 
 FROM node:20-alpine AS prod
 EXPOSE 3000
