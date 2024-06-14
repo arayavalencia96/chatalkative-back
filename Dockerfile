@@ -1,29 +1,26 @@
-# Stage 1: Base stage
-FROM node:node:20-alpine AS base
+FROM node:node:20-alpine AS dev-deps
 WORKDIR /app
-COPY package.json yarn.lock ./
-
-# Stage 2: Dependencies
-FROM base AS dependencies
+COPY package.json package.json
 RUN yarn install --frozen-lockfile
 
-# Stage 3: Development dependencies
-FROM dependencies AS dev-dependencies
-RUN yarn install --frozen-lockfile --dev
 
-# Stage 4: Build
-FROM dev-dependencies AS build
+FROM node:node:20-alpine AS builder
+WORKDIR /app
+COPY --from=dev-deps /app/node_modules ./node_modules
 COPY . .
+# RUN yarn test
 RUN yarn build
 
-# Stage 5: Production
-FROM base AS prod-dependencies
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
+FROM node:node:20-alpine AS prod-deps
+WORKDIR /app
+COPY package.json package.json
+RUN yarn install --prod --frozen-lockfile
 
-CMD ["node", "dist/main.js"]
 
-# Stage 6: Development
-FROM dev-dependencies AS development
-COPY . .
-CMD ["yarn", "start:dev"]
+FROM node:node:20-alpine AS prod
+EXPOSE 3000
+WORKDIR /app
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+
+CMD [ "node","dist/main.js"]
