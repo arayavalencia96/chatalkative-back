@@ -2,7 +2,7 @@ import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class OrthographyDto {
   @IsString()
-  readonly propmt: string;
+  readonly prompt: string;
 
   @IsInt()
   @IsOptional()

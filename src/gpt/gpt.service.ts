@@ -4,13 +4,14 @@ import {
   Logger,
 } from '@nestjs/common';
 import { othographyCheckUseCase } from './use-cases/othography-check.use-case';
-import { OrthographyDto, ProsConsDiscusserDto } from './dtos';
+import { OrthographyDto, ProsConsDiscusserDto, TraslateDto } from './dtos';
 
 import OpenAI from 'openai';
 import { ConfigService } from '@nestjs/config';
 import {
   prosConsDicusserStreamUseCase,
   prosConsDicusserUseCase,
+  traslateUseCase,
 } from './use-cases';
 
 @Injectable()
@@ -33,7 +34,7 @@ export class GptService {
 
   async othographyCheck(orthographyDto: OrthographyDto) {
     return await othographyCheckUseCase(this.openai, {
-      prompt: orthographyDto.propmt,
+      prompt: orthographyDto.prompt,
     });
   }
 
@@ -43,5 +44,9 @@ export class GptService {
 
   async prosConsDicusserStream({ prompt }: ProsConsDiscusserDto) {
     return await prosConsDicusserStreamUseCase(this.openai, { prompt });
+  }
+
+  async traslate({ prompt, lang }: TraslateDto) {
+    return await traslateUseCase(this.openai, { prompt, lang });
   }
 }
