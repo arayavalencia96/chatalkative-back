@@ -4,8 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GptModule } from './gpt/gpt.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), GptModule],
+  imports: [GptModule, ConfigModule.forRoot()],
   controllers: [],
-  providers: [],
 })
 export class AppModule {}
