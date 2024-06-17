@@ -4,6 +4,8 @@
 /build
 
 .env
+/generated/*
+!/generated/.gitkeep
 
 # Logs
 logs
