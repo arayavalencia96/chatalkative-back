@@ -12,6 +12,7 @@ import {
 import OpenAI from 'openai';
 
 import {
+  AudioToTextDto,
   OrthographyDto,
   ProsConsDiscusserDto,
   TextToAudioDto,
@@ -19,6 +20,7 @@ import {
 } from './dtos';
 import { othographyCheckUseCase } from './use-cases/othography-check.use-case';
 import {
+  audioToTextUseCase,
   prosConsDicusserStreamUseCase,
   prosConsDicusserUseCase,
   textToAudioUseCase,
@@ -74,5 +76,13 @@ export class GptService {
     const exists = fs.existsSync(filePath);
     if (!exists) throw new NotFoundException('File not found');
     return filePath;
+  }
+
+  async audioToText(
+    audioFile: Express.Multer.File,
+    audioToTextDto?: AudioToTextDto,
+  ) {
+    const { prompt } = audioToTextDto;
+    return await audioToTextUseCase(this.openai, { audioFile, prompt });
   }
 }
