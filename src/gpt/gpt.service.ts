@@ -13,6 +13,8 @@ import OpenAI from 'openai';
 
 import {
   AudioToTextDto,
+  ImgGenerationDto,
+  ImgVariationDto,
   OrthographyDto,
   ProsConsDiscusserDto,
   TextToAudioDto,
@@ -21,6 +23,8 @@ import {
 import { othographyCheckUseCase } from './use-cases/othography-check.use-case';
 import {
   audioToTextUseCase,
+  imgGenerationUseCase,
+  imgVariationUseCase,
   prosConsDicusserStreamUseCase,
   prosConsDicusserUseCase,
   textToAudioUseCase,
@@ -84,5 +88,20 @@ export class GptService {
   ) {
     const { prompt } = audioToTextDto;
     return await audioToTextUseCase(this.openai, { audioFile, prompt });
+  }
+
+  async imgGeneration(imgGenerationDto: ImgGenerationDto) {
+    return await imgGenerationUseCase(this.openai, { ...imgGenerationDto });
+  }
+
+  getGeneratedImg(fileName: string) {
+    const filePath = path.resolve('./', './generated/images', fileName);
+    const exists = fs.existsSync(filePath);
+    if (!exists) throw new NotFoundException('File not found');
+    return filePath;
+  }
+
+  async generateImgVariation({ baseImg }: ImgVariationDto) {
+    return imgVariationUseCase(this.openai, { baseImg });
   }
 }

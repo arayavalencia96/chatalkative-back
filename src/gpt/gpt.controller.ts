@@ -20,6 +20,8 @@ import { diskStorage } from 'multer';
 import { GptService } from './gpt.service';
 import {
   AudioToTextDto,
+  ImgGenerationDto,
+  ImgVariationDto,
   OrthographyDto,
   ProsConsDiscusserDto,
   TextToAudioDto,
@@ -117,5 +119,25 @@ export class GptController {
     @Body() audioToTextDto: AudioToTextDto,
   ) {
     return this.gptService.audioToText(file, audioToTextDto);
+  }
+
+  @Post('img-generation')
+  async imgGeneration(@Body() imgGenerationDto: ImgGenerationDto) {
+    return this.gptService.imgGeneration(imgGenerationDto);
+  }
+
+  @Get('img-generated/:fileName')
+  async getGeneratedImg(
+    @Res() res: Response,
+    @Param('fileName') fileName: string,
+  ) {
+    const filePath = this.gptService.getGeneratedImg(fileName);
+    res.status(HttpStatus.OK);
+    res.sendFile(filePath);
+  }
+
+  @Post('img-variation')
+  async imgVariation(@Body() imgVariationDto: ImgVariationDto) {
+    return this.gptService.generateImgVariation(imgVariationDto);
   }
 }
